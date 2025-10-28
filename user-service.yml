@@ -1,28 +1,22 @@
-# ===================================================================
-# CONFIGURATION POUR LE SERVICE : user-service
-# ===================================================================
-
-# Port sur lequel ce service spécifique va démarrer
-server:
-  port: 8081
-
-# Configuration de la base de données H2 en mémoire
 spring:
+  application:
+    name: user-service
+
   datasource:
-    url: jdbc:h2:mem:userdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:userdb
     driverClassName: org.h2.Driver
     username: sa
-    password: password
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
-    hibernate:
-      ddl-auto: update 
+    password:
+    platform: h2
   h2:
     console:
       enabled: true
       path: /h2-console
 
-# Propriété métier : la clé secrète pour les tokens JWT
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-server:8761/eureka/
+
 jwt:
-  secret: MaSuperCleSecreteAssezLonguePourEtreSureEtGereeViaGit
+  secret: MaSuperCleSecreteUltraLonguePourHS512_ChangezEnProd
