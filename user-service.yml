@@ -1,0 +1,71 @@
+# ===================================================================
+# CONFIGURATION POUR LE SERVICE UTILISATEURS (user-service)
+# ===================================================================
+
+# Configuration du port sur lequel le service va démarrer
+server:
+  port: 8081
+
+# Nom de l'application. Ce nom sera utilisé pour l'enregistrement sur Eureka
+# et pour la récupération de cette configuration par le service lui-même.
+spring:
+  application:
+    name: user-service
+
+  # -------------------------------------------
+  # Configuration de la base de données H2
+  # -------------------------------------------
+  datasource:
+    # URL pour une base de données H2 "en mémoire". La base est créée au démarrage
+    # et détruite à l'arrêt de l'application. Idéal pour le développement.
+    url: jdbc:h2:mem:userdb
+    driverClassName: org.h2.Driver
+    username: sa
+    # Le mot de passe peut être laissé vide, mais il est préférable d'en mettre un.
+    password: password
+  
+  # -------------------------------------------
+  # Configuration de JPA et Hibernate
+  # -------------------------------------------
+  jpa:
+    # Dialecte SQL spécifique à H2 pour que Hibernate génère des requêtes compatibles.
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      # 'update' : Met à jour le schéma de la base de données (crée les tables, les colonnes, etc.)
+      # au démarrage en se basant sur vos classes @Entity.
+      ddl-auto: update
+    # Affiche dans la console les requêtes SQL générées par Hibernate. Très utile pour le débogage.
+    show-sql: true
+
+  # -------------------------------------------
+  # Configuration de la console web H2
+  # -------------------------------------------
+  # Permet d'accéder à une interface web pour visualiser et interroger votre base de données.
+  h2:
+    console:
+      enabled: true
+      # Chemin pour accéder à la console. URL : http://localhost:8081/h2-console
+      path: /h2-console
+
+# ===================================================================
+# CONFIGURATION MICROSERVICES (SPRING CLOUD)
+# ===================================================================
+
+# Configuration du client Eureka pour s'enregistrer auprès du serveur de découverte
+eureka:
+  client:
+    serviceUrl:
+      # Adresse du serveur Eureka. Le service s'y enregistrera au démarrage.
+      defaultZone: http://localhost:8761/eureka/
+
+# ===================================================================
+# PROPRIÉTÉS SPÉCIFIQUES À L'APPLICATION
+# ===================================================================
+
+# Propriétés pour la gestion des JSON Web Tokens (JWT)
+jwt:
+  # Clé secrète utilisée pour signer les tokens.
+  # IMPORTANT : Utilisez une clé longue et complexe en production.
+  secret: MaSuperCléSecrèteQuiVientDeGitHubEtQuiEstBienMieuxGéréeIciPourLeUserService
+  # Durée de validité du token en millisecondes (ici, 24 heures)
+  expiration-ms: 86400000
