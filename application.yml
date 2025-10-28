@@ -1,0 +1,13 @@
+# ===================================================================
+# FICHIER DE CONFIGURATION GLOBAL (COMMUN À TOUS LES SERVICES)
+# ===================================================================
+
+# Tous nos microservices doivent savoir où se trouve Eureka.
+# En le mettant ici, on évite de le répéter dans chaque fichier.
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Préférer l'adresse IP à l'hostname pour l'enregistrement dans Eureka
+    prefer-ip-address: true
