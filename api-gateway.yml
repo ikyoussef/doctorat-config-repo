@@ -1,0 +1,24 @@
+# ===================================================================
+# CONFIGURATION POUR LE SERVICE : api-gateway
+# ===================================================================
+
+# Port d'entrée de toute l'application
+server:
+  port: 8080
+
+# Configuration des routes de la passerelle
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Route vers le service d'authentification/utilisateurs
+        - id: user-service-route
+          uri: lb://user-service # "lb" signifie "load-balanced" via Eureka
+          predicates:
+            - Path=/auth/** # Toutes les requêtes commençant par /auth/... seront redirigées
+
+        # Vous ajouterez d'autres routes ici
+        # - id: inscriptions-service-route
+        #   uri: lb://inscriptions-service
+        #   predicates:
+        #     - Path=/inscriptions/**
