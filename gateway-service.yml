@@ -2,23 +2,30 @@ spring:
   application:
     name: api-gateway
 
+  config:
+    # Charger la configuration externe depuis le Config Server
+    import: "optional:configserver:http://localhost:8888"
+
   cloud:
     gateway:
-      routes:
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/auth/** 
-          filters: []
+      # Active le moteur WebFlux de Spring Cloud Gateway
+      server:
+        webflux:
+          enabled: true
+          routes:
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/users/**
+              filters:
+                - StripPrefix=1
+              
+              
 
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/api/inventory/**
-          filters:
-            - StripPrefix=1
+      # Routes statiques vers les services enregistrés dans Eureka
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
