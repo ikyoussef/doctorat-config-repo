@@ -1,18 +1,10 @@
 # ===================================================================
 # CONFIGURATION POUR LE SERVICE : user-service
-# CE FICHIER DOIT ÊTRE DANS VOTRE DÉPÔT GITHUB
 # ===================================================================
 
-# Port sur lequel le service va démarrer
+# Port sur lequel ce service spécifique va démarrer
 server:
   port: 8081
-
-# Configuration du client Eureka
-# Indique au service où se trouve le serveur de découverte
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
 
 # Configuration de la base de données H2 en mémoire
 spring:
@@ -23,23 +15,14 @@ spring:
     password: password
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    # Affiche les requêtes SQL dans la console (utile pour le débogage)
     show-sql: true
     hibernate:
-      # Crée ou met à jour le schéma de la base de données au démarrage
       ddl-auto: update 
-  # Configuration pour activer la console web H2
   h2:
     console:
       enabled: true
-      # Chemin pour accéder à la console via le navigateur : http://localhost:8081/h2-console
       path: /h2-console
 
-# ===================================================================
-# PROPRIÉTÉS MÉTIER SPÉCIFIQUES À CE SERVICE
-# ===================================================================
-
-# Clé secrète pour la signature et la vérification des tokens JWT
-# C'est l'exemple parfait d'une propriété qui doit être centralisée
+# Propriété métier : la clé secrète pour les tokens JWT
 jwt:
   secret: MaSuperCleSecreteAssezLonguePourEtreSureEtGereeViaGit
