@@ -1,29 +1,25 @@
 spring:
-  application:
-    name: api-gateway
-
-  config:
-    import: optional:configserver:http://localhost:8888
-
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
-
       routes:
-        - id: user-service
+        - id: user-service-route
           uri: lb://user-service
           predicates:
             - Path=/auth/**
-          filters:
-            - StripPrefix=0
+          # Pas de StripPrefix car on veut garder /auth/**
 
 server:
   port: 8080
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
+    register-with-eureka: true
+    fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
