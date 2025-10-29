@@ -1,16 +1,17 @@
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: user-service-route
-          uri: lb://user-service
-          predicates:
-            - Path=/auth/**
-          # Pas de StripPrefix car on veut garder /auth/**
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: user-service-route
+              uri: lb://user-service
+              predicates:
+                - Path=/auth/**
 
 server:
   port: 8080
@@ -23,3 +24,9 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+    com.netflix.discovery: DEBUG
