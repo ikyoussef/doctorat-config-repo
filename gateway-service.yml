@@ -1,56 +1,29 @@
-# ===================================================================
-# CONFIGURATION DU SERVICE : API-GATEWAY
-# ===================================================================
-
 spring:
   application:
     name: api-gateway
 
   config:
-    # Permet de charger dynamiquement la configuration centralisée
-    import: "optional:configserver:http://localhost:8888"
+    import: optional:configserver:http://localhost:8888
 
   cloud:
     gateway:
-      # Active le moteur réactif WebFlux (Spring Cloud Gateway 3.x+)
-      server:
-        webflux:
-          enabled: true
-
-      # Découverte automatique des routes via Eureka
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
 
-      # Routes personnalisées spécifiques
       routes:
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/auth/**
-          filters: []
-
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/api/inventory/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=0
 
-# ===================================================================
-# CONFIGURATION EUREKA
-# ===================================================================
+server:
+  port: 8080
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-
-# ===================================================================
-# PORT PAR DÉFAUT DU GATEWAY (peut être modifié localement)
-# ===================================================================
-server:
-  port: 8080
