@@ -69,16 +69,16 @@ management:
       exposure:
         include: health,info,gateway,routes,metrics
   endpoint:
+    # ✅ Configuration corrigée pour Spring Cloud 2025
     gateway:
-      enabled: true
+      access: unrestricted  # Au lieu de enabled: true
     health:
       show-details: always
 
 # Logging
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
     org.springframework.cloud.gateway.route: DEBUG
-    org.springframework.cloud.gateway.handler: DEBUG
-    org.springframework.cloud.loadbalancer: DEBUG
-    reactor.netty: INFO
+    org.springframework.cloud.loadbalancer: INFO
+    reactor.netty: WARN
