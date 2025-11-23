@@ -3,7 +3,7 @@ spring:
     gateway:
       server:
         webflux:
-          # Discovery automatique des services
+          # Discovery locator pour créer automatiquement des routes
           discovery:
             locator:
               enabled: true
@@ -11,7 +11,7 @@ spring:
           
           # Routes explicites
           routes:
-            # Route pour User Service - Auth
+            # Route pour User Service - Authentication
             - id: user-service-auth
               uri: lb://user-service
               predicates:
@@ -29,28 +29,30 @@ spring:
                 - Path=/api/users/**
               filters:
                 - StripPrefix=1
+            
+            # Route pour Discovery Server (optionnel)
+            - id: discovery-server
+              uri: http://localhost:8761
+              predicates:
+                - Path=/eureka/**
           
-          # CORS Configuration
+          # Configuration globale CORS
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowedOrigins: 
-                  - "http://localhost:4200"
-                  - "http://localhost:3000"
+                allowedOrigins: "*"
                 allowedMethods:
                   - GET
                   - POST
                   - PUT
                   - DELETE
                   - OPTIONS
-                  - PATCH
                 allowedHeaders: "*"
-                exposedHeaders:
-                  - Authorization
-                allowCredentials: true
-                maxAge: 3600
+                allowCredentials: false
 
-# Eureka Configuration
+server:
+  port: 8080
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -60,28 +62,21 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-    registry-fetch-interval-seconds: 5
 
-# Management/Actuator
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway,routes,metrics
+        include: health,info,gateway,routes
   endpoint:
-    # ✅ Configuration corrigée pour Spring Cloud 2025
     gateway:
-      access: unrestricted  # Au lieu de enabled: true
-    health:
-      show-details: always
+      enabled: true
 
-# Logging
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.cloud.gateway.route: DEBUG
-    org.springframework.cloud.loadbalancer: INFO
-    reactor.netty: WARN
+    org.springframework.cloud.loadbalancer: DEBUG
 
 
 # spring:
