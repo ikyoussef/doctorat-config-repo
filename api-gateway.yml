@@ -3,7 +3,7 @@ spring:
     gateway:
       server:
         webflux:
-          # Discovery locator pour créer automatiquement des routes
+          # Discovery locator automatique
           discovery:
             locator:
               enabled: true
@@ -12,7 +12,6 @@ spring:
           # Routes explicites
           routes:
             # ========== USER SERVICE ==========
-            # Route pour User Service - Authentication
             - id: user-service-auth
               uri: lb://user-service
               predicates:
@@ -23,14 +22,13 @@ spring:
                     name: userServiceCircuitBreaker
                     fallbackUri: forward:/fallback/user-service
             
-            # Route pour User Service - API
             - id: user-service-api
               uri: lb://user-service
               predicates:
                 - Path=/api/users/**
             
             # ========== REGISTRATION SERVICE ==========
-            # Route pour Registration Service - Campaigns
+            # Route pour Campaigns
             - id: registration-service-campaigns
               uri: lb://registration-service
               predicates:
@@ -41,7 +39,7 @@ spring:
                     name: registrationServiceCircuitBreaker
                     fallbackUri: forward:/fallback/registration-service
             
-            # Route pour Registration Service - Registrations
+            # Route pour Registrations
             - id: registration-service-registrations
               uri: lb://registration-service
               predicates:
@@ -52,19 +50,17 @@ spring:
                     name: registrationServiceCircuitBreaker
                     fallbackUri: forward:/fallback/registration-service
             
-            # Route pour Discovery Server (optionnel)
+            # Route pour Discovery Server
             - id: discovery-server
               uri: http://localhost:8761
               predicates:
                 - Path=/eureka/**
           
-          # Configuration globale CORS
+          # CORS Global
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowedOrigins: 
-                  - "http://localhost:4200"
-                  - "http://localhost:3000"
+                allowedOrigins: "*"
                 allowedMethods:
                   - GET
                   - POST
@@ -75,12 +71,14 @@ spring:
                 allowedHeaders: "*"
                 exposedHeaders:
                   - Authorization
-                allowCredentials: true
+                  - X-User-Id
+                allowCredentials: false
                 maxAge: 3600
 
 server:
   port: 8080
 
+# Eureka Client
 eureka:
   instance:
     prefer-ip-address: true
@@ -92,6 +90,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     registry-fetch-interval-seconds: 5
 
+# Management/Actuator
 management:
   endpoints:
     web:
@@ -99,14 +98,16 @@ management:
         include: health,info,gateway,routes,metrics
   endpoint:
     gateway:
-      access: unrestricted  # ✅ Correction pour Spring Cloud 2025
+      access: unrestricted
 
+# Logging
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.cloud.gateway.route: DEBUG
-    org.springframework.cloud.loadbalancer: INFO
-    reactor.netty: WARN
+    org.springframework.cloud.gateway.handler: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+    reactor.netty.http.client: DEBUG
 
 
 # spring:
