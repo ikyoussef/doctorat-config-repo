@@ -11,6 +11,7 @@ spring:
           
           # Routes explicites
           routes:
+            # ========== USER SERVICE ==========
             # Route pour User Service - Authentication
             - id: user-service-auth
               uri: lb://user-service
@@ -27,8 +28,29 @@ spring:
               uri: lb://user-service
               predicates:
                 - Path=/api/users/**
+            
+            # ========== REGISTRATION SERVICE ==========
+            # Route pour Registration Service - Campaigns
+            - id: registration-service-campaigns
+              uri: lb://registration-service
+              predicates:
+                - Path=/api/campaigns/**
               filters:
-                - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: registrationServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/registration-service
+            
+            # Route pour Registration Service - Registrations
+            - id: registration-service-registrations
+              uri: lb://registration-service
+              predicates:
+                - Path=/api/registrations/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: registrationServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/registration-service
             
             # Route pour Discovery Server (optionnel)
             - id: discovery-server
@@ -40,15 +62,21 @@ spring:
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowedOrigins: "*"
+                allowedOrigins: 
+                  - "http://localhost:4200"
+                  - "http://localhost:3000"
                 allowedMethods:
                   - GET
                   - POST
                   - PUT
                   - DELETE
                   - OPTIONS
+                  - PATCH
                 allowedHeaders: "*"
-                allowCredentials: false
+                exposedHeaders:
+                  - Authorization
+                allowCredentials: true
+                maxAge: 3600
 
 server:
   port: 8080
@@ -62,21 +90,23 @@ eureka:
     fetch-registry: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway,routes
+        include: health,info,gateway,routes,metrics
   endpoint:
     gateway:
-      enabled: true
+      access: unrestricted  # ✅ Correction pour Spring Cloud 2025
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
     org.springframework.cloud.gateway.route: DEBUG
-    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.cloud.loadbalancer: INFO
+    reactor.netty: WARN
 
 
 # spring:
