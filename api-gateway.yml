@@ -82,3 +82,89 @@ logging:
     org.springframework.cloud.gateway.route: DEBUG
     org.springframework.cloud.loadbalancer: INFO
     reactor.netty: WARN
+
+
+# spring:
+#   cloud:
+#     gateway:
+#       server:
+#         webflux:
+#           # Discovery automatique des services
+#           discovery:
+#             locator:
+#               enabled: true
+#               lower-case-service-id: true
+          
+#           # Routes explicites
+#           routes:
+#             # Route pour User Service - Auth
+#             - id: user-service-auth
+#               uri: lb://user-service
+#               predicates:
+#                 - Path=/auth/**
+#               filters:
+#                 - name: CircuitBreaker
+#                   args:
+#                     name: userServiceCircuitBreaker
+#                     fallbackUri: forward:/fallback/user-service
+            
+#             # Route pour User Service - API
+#             - id: user-service-api
+#               uri: lb://user-service
+#               predicates:
+#                 - Path=/api/users/**
+#               filters:
+#                 - StripPrefix=1
+          
+#           # CORS Configuration
+#           globalcors:
+#             corsConfigurations:
+#               '[/**]':
+#                 allowedOrigins: 
+#                   - "http://localhost:4200"
+#                   - "http://localhost:3000"
+#                 allowedMethods:
+#                   - GET
+#                   - POST
+#                   - PUT
+#                   - DELETE
+#                   - OPTIONS
+#                   - PATCH
+#                 allowedHeaders: "*"
+#                 exposedHeaders:
+#                   - Authorization
+#                 allowCredentials: true
+#                 maxAge: 3600
+
+# # Eureka Configuration
+# eureka:
+#   instance:
+#     prefer-ip-address: true
+#     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+#   client:
+#     register-with-eureka: true
+#     fetch-registry: true
+#     serviceUrl:
+#       defaultZone: http://localhost:8761/eureka/
+#     registry-fetch-interval-seconds: 5
+
+# # Management/Actuator
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: health,info,gateway,routes,metrics
+#   endpoint:
+#     # ✅ Configuration corrigée pour Spring Cloud 2025
+#     gateway:
+#       access: unrestricted  # Au lieu de enabled: true
+#     health:
+#       show-details: always
+
+# # Logging
+# logging:
+#   level:
+#     org.springframework.cloud.gateway: INFO
+#     org.springframework.cloud.gateway.route: DEBUG
+#     org.springframework.cloud.loadbalancer: INFO
+#     reactor.netty: WARN
